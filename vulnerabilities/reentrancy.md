@@ -7,6 +7,7 @@ The reentrancy vulnerability occurs when certain functions, unintentionally desi
 
 
 ## Toy Example
+```Solidity
 pragma solidity ^0.8.0;
 
 contract SecureContract {
@@ -283,7 +284,9 @@ contract FakePairContract {
     receive() external payable {}
 }
 
+```
 
 
+## References
 
-## ... 
+
