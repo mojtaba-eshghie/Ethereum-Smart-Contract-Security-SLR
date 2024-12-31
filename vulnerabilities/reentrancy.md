@@ -30,11 +30,12 @@ contract SecureContract {
         require(success, "Transfer failed");
     }
 }
-
+```
 
 
 ## Real-World Example
 
+```Solidity
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.10;
 
