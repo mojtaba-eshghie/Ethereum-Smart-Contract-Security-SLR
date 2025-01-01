@@ -43,6 +43,7 @@ Lost: $4.75 M
 
 Highlighted Line: address(SmartLoan).call(claimRewardData);
 This line introduces a reentrancy vulnerability by using the call method with unverified input (claimRewardData). An attacker can exploit this by interacting with the SmartLoan contract through a malicious contract (e.g., a fake pair contract). The vulnerability arises because the external call allows the attacker to re-enter the contract and manipulate its state before the initial execution completes, bypassing critical validations.
+Below is the smart contract used in the exploitation of the identified vulnerabilities[1].
 
 ```Solidity
 // SPDX-License-Identifier: UNLICENSED
@@ -299,4 +300,4 @@ contract FakePairContract {
 
 ## References
 
-https://github.com/SunWeb3Sec/DeFiHackLabs
+[1] https://github.com/SunWeb3Sec/DeFiHackLabs
