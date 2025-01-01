@@ -38,7 +38,7 @@ contract VulnerableContract {
 ## Real-World Example
 
 Date Identified: 11/11/2024
- Lost: $4.75 M
+Lost: $4.75 M
 Highlighted Line: address(SmartLoan).call(claimRewardData);
 This line introduces a reentrancy vulnerability by using the call method with unverified input (claimRewardData). An attacker can exploit this by interacting with the SmartLoan contract through a malicious contract (e.g., a fake pair contract). The vulnerability arises because the external call allows the attacker to re-enter the contract and manipulate its state before the initial execution completes, bypassing critical validations.
 
