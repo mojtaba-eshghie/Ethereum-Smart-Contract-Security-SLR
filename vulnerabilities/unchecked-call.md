@@ -28,6 +28,7 @@ Additionally, the sweepCommission() function, meant for the owner to withdraw fe
 
 ## References
 [1] Hengyan Zhang, Weizhe Zhang, Yuming Feng, and Yang Liu. Svscanner: Detecting smart contract vulnerabilities via deep semantic extraction. Journal of Information Security and Applications, 75:103484, 2023
+
 [2] https://medium.com/hackernoon/smart-contract-attacks-part-2-ponzi-games-gone-wrong-d5a8b1a98dd8
 
 
