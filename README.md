@@ -1,1 +1,1 @@
-# Companion Respository for Systematic Literature Review on Smart Contract Vulnerabilities
+# Systematic Literature Review on Smart Contract Vulnerabilities
