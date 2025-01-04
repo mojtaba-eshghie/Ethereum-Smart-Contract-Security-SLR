@@ -62,9 +62,11 @@ A failed transfer interrupts the refund process, leaving _refundProgress incompl
 ### Combined Impact
 The combination of these vulnerabilities creates a situation where:
 
-The refund progress check condition (_refundProgress < _bidIndex) perpetually blocks further processing.
-The refund loop halts prematurely due to gas limitations or failed transactions.
-A lack of fallback mechanisms leaves locked funds irrecoverable, causing substantial financial losses.
+- The refund progress check condition (_refundProgress < _bidIndex) perpetually blocks further processing.
+
+- The refund loop halts prematurely due to gas limitations or failed transactions.
+- 
+- A lack of fallback mechanisms leaves locked funds irrecoverable, causing substantial financial losses.
 
 ## References
 [1]   https://decrypt.co/98530/aku-ethereum-nft-launch-ends-with-34m-locked-in-flawed-smart-contract
