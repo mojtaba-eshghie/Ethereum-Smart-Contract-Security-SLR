@@ -36,9 +36,9 @@ The vulnerability allows attackers to manipulate the outcome of the lottery. Her
 - Input Control: The attacker has complete control over the msg.sender parameter since it represents the address of the transaction sender. By using multiple addresses or smart contracts, they can influence the randomness calculation. Block Number Manipulation: Miners can manipulate the block.number parameter by controlling when a transaction is included in the block. This allows them to predict or influence the random number generated.
 - Attackers can precompute the result of the keccak256 function using different combinations of msg.sender and block.number to identify favorable outcomes. Once an attacker determines favorable inputs, they execute the function at the desired block number with the manipulated sender address, guaranteeing a win in the lottery. This exploit undermines the fairness of the lottery system by allowing attackers to game the randomness mechanism. The predictable nature of msg.sender and block.number makes this approach ineffective for any application requiring secure randomness.
 ### How the Exploit Works:
-Attack Setup: The attacker repeatedly sends transactions with different addresses or delays their inclusion until the desired block is mined.
-Outcome Control: By controlling msg.sender and block.number, the attacker can precompute the result of keccak256 and choose parameters that produce a favorable outcome.
-Exploitation: Once the attacker finds favorable inputs, they execute the function, effectively rigging the lottery.
+- Attack Setup: The attacker repeatedly sends transactions with different addresses or delays their inclusion until the desired block is mined.
+- Outcome Control: By controlling msg.sender and block.number, the attacker can precompute the result of keccak256 and choose parameters that produce a favorable outcome.
+- Exploitation: Once the attacker finds favorable inputs, they execute the function, effectively rigging the lottery.
 
 ## References
 [1] Bo Jiang, Ye Liu, and Wing Kwong Chan. Contractfuzzer: Fuzzing smart contracts for vulnerability detection. In Proceedings of the 33rd ACM/IEEE International Conference on Automated Software Engineering, pages 259–269, 2018.
