@@ -2,7 +2,29 @@
 Front-running, also known as Transaction-Ordering Dependency (TOD) [1], is a vulnerability stemming from the inherent concurrency issues within blockchain systems. In blockchains, the execution order of transactions depends on miners' decisions, typically influenced by transaction rewards. This opens the door for exploitation, where a malicious externally owned account (EOA) can manipulate the system by offering a higher gas price to prioritize their transaction. Additionally, a malicious miner can bypass gas price considerations entirely, prioritizing their own transactions to gain an unfair advantage. This behavior undermines the fairness and integrity of decentralized systems.
 
 ## Toye Example
+pragma solidity ^0.8.0;
 
+contract VulnerableDEX {
+    uint256 public tokenPrice = 1 ether; // Initial price of 1 token
+    uint256 public constant PRICE_INCREMENT = 0.1 ether; // Price increases by 0.1 ETH after each purchase
+    mapping(address => uint256) public balances;
+
+    event TokensPurchased(address indexed buyer, uint256 amount, uint256 price);
+
+    // Allows users to buy tokens
+    function buyTokens(uint256 numTokens) public payable {
+        uint256 totalPrice = numTokens * tokenPrice; // Calculate total price for the requested tokens
+        require(msg.value >= totalPrice, "Insufficient ETH sent");
+
+        balances[msg.sender] += numTokens;
+        emit TokensPurchased(msg.sender, numTokens, tokenPrice);
+
+        // 🔴 Vulnerability: The price is updated after each purchase. 
+        // Attackers can exploit this by submitting a higher-gas transaction
+        // to purchase tokens first, increasing the price for subsequent buyers.
+        tokenPrice += PRICE_INCREMENT;
+    }
+}
 
 ## Real World Example
 In the real world, numerous cases of front-running have led to significant financial crimes and heavy penalties. For instance, in 2009, 14 Wall Street firms faced fines amounting to nearly $70 million from the SEC (Securities and Exchange Commission). These examples highlight the real-world implications of such vulnerabilities and underscore the importance of addressing them effectively in blockchain systems [2].
