@@ -52,16 +52,7 @@ for (uint256 i=_refundProgress; gasUsed < 5000000 && i < _bidIndex; i++) {
 }
 ```
  This loop attempts to process refunds within a gas limit of 5000000. If the transactions are complex or the gas available is insufficient, the loop may fail to complete all refunds. Consequently, the _refundProgress variable may not update entirely, perpetuating the condition in the previous vulnerability and preventing the remaining refunds from being processed.
-- Use of call for Ether Transfers
-  
-The contract uses the call function to send Ether to bidders:
-```Solidity
-(bool sent, ) = bidData.bidder.call{value: refund}("");
-require(sent, "Failed to refund bidder");
-```
- Using call for transferring Ether introduces several risks:
-If the recipient is a smart contract and its fallback or receive function consumes excessive gas or encounters an error, the transfer fails.
-A failed transfer interrupts the refund process, leaving _refundProgress incomplete and locking funds within the contract.
+
 ### Combined Impact
 The combination of these vulnerabilities creates a situation where:
 
@@ -69,7 +60,6 @@ The combination of these vulnerabilities creates a situation where:
 
 - The refund loop halts prematurely due to gas limitations or failed transactions.
   
-- A lack of fallback mechanisms leaves locked funds irrecoverable, causing substantial financial losses.
 
 ## References
 [1]   https://decrypt.co/98530/aku-ethereum-nft-launch-ends-with-34m-locked-in-flawed-smart-contract
