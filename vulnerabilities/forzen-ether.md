@@ -28,13 +28,15 @@ On April 22, 2022, a vulnerability was identified in a series of smart contracts
 ### Vulnerability Points
 The contract exhibits three critical vulnerability points that collectively resulted in the locking of users’ funds:
 
-- Refund Progress Check 
+- Refund Progress Check
+  
 At the beginning of the processRefunds function, the following condition is used to verify the status of refunds:
 ```Solidity
 require(_refundProgress < _bidIndex, "Refunds already processed");
 ```
  This condition checks if all refunds have been processed. The _refundProgress variable tracks the number of refunds processed, while _bidIndex represents the total number of bids. If, for any reason (such as gas limitations), _refundProgress is not updated, this condition will always evaluate as true, effectively halting further refund processing and leading to funds being locked within the contract.
 - Gas Limit in the Refund Loop
+  
 In the same function, the loop responsible for processing refunds is written as follows:
 ```Solidity
 for (uint256 i=_refundProgress; gasUsed < 5000000 && i < _bidIndex; i++) {
@@ -51,6 +53,7 @@ for (uint256 i=_refundProgress; gasUsed < 5000000 && i < _bidIndex; i++) {
 ```
  This loop attempts to process refunds within a gas limit of 5000000. If the transactions are complex or the gas available is insufficient, the loop may fail to complete all refunds. Consequently, the _refundProgress variable may not update entirely, perpetuating the condition in the previous vulnerability and preventing the remaining refunds from being processed.
 - Use of call for Ether Transfers
+  
 The contract uses the call function to send Ether to bidders:
 ```Solidity
 (bool sent, ) = bidData.bidder.call{value: refund}("");
