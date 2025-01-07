@@ -34,7 +34,6 @@ contract VulnerableContract {
 
 ```
 
-
 ## Real-World Example
 
 Date Identified: 11/11/2024
