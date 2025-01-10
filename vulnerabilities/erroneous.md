@@ -55,13 +55,5 @@ function initWallet(address[] _owners, uint _required, uint _daylimit) {
     m_required = _required;
 }
  ```
-### Root Cause of the Exploit
 
-- The initWallet and initMultiowned functions in the library were not marked as internal or private, allowing them to be invoked externally.
-- The fallback function’s reliance on delegatecall without restricting accessible methods enabled the attacker to exploit the vulnerability.
-- There was no mechanism to verify whether the wallet had already been initialized, allowing the attacker to overwrite the ownership structure.
-
-## References
-[1] https://medium.freecodecamp.org/a-hacker-stole-31m-of-ether-how-it-happened-and-what-it-means-forethereum-
-9e5dc29e33ce.
 
