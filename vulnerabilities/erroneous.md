@@ -42,18 +42,14 @@ function initWallet(address[] _owners, uint _required, uint _daylimit) {
 }
 ```
 - Overwriting Ownership: The initMultiowned() function overwrites the ownership details without verifying if the wallet was already initialized.
-  ```Solidity
-  function initMultiowned(address[] _owners, uint _required) {
-    m_numOwners = _owners.length + 1;
-    m_owners[1] = uint(msg.sender);
-    m_ownerIndex[uint(msg.sender)] = 1;
-    for (uint i = 0; i < _owners.length; ++i) {
-        m_owners[2 + i] = uint(_owners[i]);
-        m_ownerIndex[uint(_owners[i])] = 2 + i;
-    }
-    m_required = _required;
-}
-```
+- 
+  ### Root Cause of the Exploit
+- The initWallet and initMultiowned functions in the library were not marked as internal or private, allowing them to be invoked externally.
+- The fallback function’s reliance on delegatecall without restricting accessible methods enabled the attacker to exploit the vulnerability.
+- There was no mechanism to verify whether the wallet had already been initialized, allowing the attacker to overwrite the ownership structure
+
+  ## Refwrences
+  [1] https://medium.freecodecamp.org/a-hacker-stole-31m-of-ether-how-it-happened-and-what-it-means-forethereum-9e5dc29e33ce.
  
 
 
