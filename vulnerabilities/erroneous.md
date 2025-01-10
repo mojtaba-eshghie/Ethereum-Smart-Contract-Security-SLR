@@ -41,6 +41,7 @@ function initWallet(address[] _owners, uint _required, uint _daylimit) {
     initMultiowned(_owners, _required);
 }
 ```
+- Overwriting Ownership: The initMultiowned() function overwrites the ownership details without verifying if the wallet was already initialized
  
 
 
