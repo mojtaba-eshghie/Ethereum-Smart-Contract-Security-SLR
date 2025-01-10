@@ -57,7 +57,5 @@ function initWallet(address[] _owners, uint _required, uint _daylimit) {
 
 
 
-## References
-[1] https://medium.freecodecamp.org/a-hacker-stole-31m-of-ether-how-it-happened-and-what-it-means-forethereum-9e5dc29e33ce.
 
 
