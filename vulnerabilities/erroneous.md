@@ -32,6 +32,17 @@ function() payable {
     }
 }
 ```
+### How the Exploit Works
+- Exploiting the Fallback Function: The fallback function forwards any unknown method call to the _walletLibrary using delegatecall, executing the library's code in the context of the current wallet contract.
+
+- Reinitializing the Wallet: The attacker calls the initWallet() function from the shared library via the fallback. This function reinitializes the wallet and allows the attacker to set new owners.
+ ```Solididty
+function initWallet(address[] _owners, uint _required, uint _daylimit) {
+    initDaylimit(_daylimit);
+    initMultiowned(_owners, _required);
+}
+```
+
 ## References
 [1] https://medium.freecodecamp.org/a-hacker-stole-31m-of-ether-how-it-happened-and-what-it-means-forethereum-9e5dc29e33ce.
 
