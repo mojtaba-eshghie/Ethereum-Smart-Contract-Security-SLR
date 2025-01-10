@@ -53,6 +53,7 @@ function initMultiowned(address[] _owners, uint _required) {
     }
     m_required = _required;
 }
+```
 
   ### Root Cause of the Exploit
 - The initWallet and initMultiowned functions in the library were not marked as internal or private, allowing them to be invoked externally.
