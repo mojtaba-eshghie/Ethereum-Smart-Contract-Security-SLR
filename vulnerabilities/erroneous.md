@@ -22,7 +22,45 @@ contract VulnerableContract {
 ```
 
 ## Real World Example
+On July 19, 2017, a critical vulnerability in the Parity Wallet led to one of the most significant exploits in blockchain history, resulting in the loss of $31,000,000 worth of Ether. The issue arose due to a fundamental design flaw in the multi-signature wallet contract, specifically in the use of a shared library for wallet initialization and state management. The vulnerability allowed an attacker to reinitialize the wallet and set themselves as the owner, enabling unauthorized access to the funds. The vulnerability is highlighted in the following block of code, where the fallback function delegates unknown method calls to a shared library:
+```Solidity
+function() payable {
+    if (msg.value > 0) {
+        Deposit(msg.sender, msg.value);
+    } else if (msg.data.length > 0) {
+        _walletLibrary.delegatecall(msg.data);  
+    }
+}
+```
+### How the Exploit Works
+- Exploiting the Fallback Function: The fallback function forwards any unknown method call to the _walletLibrary using delegatecall, executing the library's code in the context of the current wallet contract.
 
+- Reinitializing the Wallet: The attacker calls the initWallet() function from the shared library via the fallback. This function reinitializes the wallet and allows the attacker to set new owners.
+ ```Solididty
+function initWallet(address[] _owners, uint _required, uint _daylimit) {
+    initDaylimit(_daylimit);
+    initMultiowned(_owners, _required);
+}
+
+```
+- Overwriting Ownership: The initMultiowned() function overwrites the ownership details without verifying if the wallet was already initialized.
+  ```Solidity
+  function initMultiowned(address[] _owners, uint _required) {
+    m_numOwners = _owners.length + 1;
+    m_owners[1] = uint(msg.sender);
+    m_ownerIndex[uint(msg.sender)] = 1;
+    for (uint i = 0; i < _owners.length; ++i) {
+        m_owners[2 + i] = uint(_owners[i]);
+        m_ownerIndex[uint(_owners[i])] = 2 + i;
+    }
+    m_required = _required;
+}
+
+ ```
+### Root Cause of the Exploit
+- The initWallet and initMultiowned functions in the library were not marked as internal or private, allowing them to be invoked externally.
+- The fallback function’s reliance on delegatecall without restricting accessible methods enabled the attacker to exploit the vulnerability.
+- There was no mechanism to verify whether the wallet had already been initialized, allowing the attacker to overwrite the ownership structure.
 
 
 ## References
