@@ -60,6 +60,7 @@ If the recipient contract consumes excessive gas in its fallback function. If th
 ### Combined Impact
 The combination of these vulnerabilities creates a scenario where:
 Unintended Transfers: Funds are sent to arbitrary or unauthorized addresses due to a lack of input validation and access control.
+
 Disruption of Logic: Failed transfers can interrupt the contract’s intended functionality, potentially leaving it in an inconsistent state.
 
 ## References
