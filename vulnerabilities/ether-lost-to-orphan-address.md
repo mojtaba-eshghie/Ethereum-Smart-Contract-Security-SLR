@@ -5,22 +5,33 @@ To execute an Ether transfer, it is essential to provide a valid 160-bit recipie
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract EtherLostExample {
-    function receiveEther() public payable {}
-
-    function sendToInvalidAddress() public {
-
-        address invalidAddress = 0x000000000000000000000000000000000000dEaD;
-
-        address payable target = payable(invalidAddress);
-
-        // 🔴 Vulnerability: Sending Ether to an inaccessible address will permanently lock the funds
-        target.transfer(address(this).balance); // Funds are sent here
+contract EtherLostToInvalidAddress {
+    function depositEther() public payable {
+        require(msg.value > 0, "You need to send some Ether!");
     }
+
+    function sendToAddress(address recipient) public {
+        require(recipient != address(0), "Recipient address cannot be zero!");
+
+        uint256 balance = address(this).balance;
+        require(balance > 0, "No funds available to transfer!");
+
+        // 🔴 Vulnerability: If the recipient address is invalid or inaccessible,
+        // the Ether will be permanently lost and cannot be recovered.
+        (bool success, ) = payable(recipient).call{value: balance}("");
+        require(success, "Ether transfer failed!");
+    }
+
     function getBalance() public view returns (uint256) {
         return address(this).balance;
     }
+
+    // Explanation of the vulnerability
+    function vulnerabilityExplanation() public pure returns (string memory) {
+        return "This contract demonstrates how transferring Ether to an invalid or inaccessible address results in the permanent loss of funds.";
+    }
 }
+
 ```
 
 ## Real World Example
