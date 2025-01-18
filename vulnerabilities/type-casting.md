@@ -54,8 +54,7 @@ IERC20(convexToken).approve(convexPool, allowance);
 
 
 ## REferences
-[1] https://github.com/code-423n4/2022-01-yield/blob/e946f40239b33812e54fafc700eb2298df1a2579/contracts/ConvexStakingWrapper.sol#L222
-![image](https://github.com/user-attachments/assets/2fc0c402-ee90-4885-8833-e58e27411754)
+[1] https://github.com/code-423n4/2022-01-yield/blob/e946f40239b33812e54fafc700eb2298df1a2579/contracts/ConvexStakingWrapper.sol#L222![image](https://github.com/user-attachments/assets/2fc0c402-ee90-4885-8833-e58e27411754)
 [2] https://www.buildbear.io/resources/guides-and-tutorials/Downcasting_Vulnerability?utm_source=chatgpt.com
 ![Uploading image.png…]()
 
