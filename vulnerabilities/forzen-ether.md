@@ -1,7 +1,7 @@
 # Frozen Ether
 Frozen Ether (or Locked Money) is a vulnerability in smart contracts where funds (such as Ether) become locked within the contract, rendering them non-transferable or non-retrievable. This issue typically arises due to flaws in the design or implementation of the smart contract code, where unexpected or rare conditions prevent functions like refunds or fund transfers from executing. It can result from logical limitations, access control errors, or reliance on external functions that fail under specific circumstances. For example, in the Akutars NFT incident, a flaw in the transaction control mechanism permanently locked over $34 million worth of Ether. Similarly, a critical library contract was accidentally deleted in the Parity Multisig Wallet incident, freezing over 580,000 Ether. This vulnerability highlights the importance of secure design and rigorous testing of smart contracts to prevent such issues.
 
-## Toye Example
+## Toy Example
 ```Solidity
 pragma solidity ^0.8.0;
 
