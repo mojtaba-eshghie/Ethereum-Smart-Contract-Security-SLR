@@ -1,4 +1,4 @@
-## Description
+## Integer overflow/underflow
 This vulnerability was first identified during the attack on BEC tokens [1]. It occurs when the result of a calculation exceeds the maximum or minimum limit of the variable's data type, making it impossible to accurately represent the value. This issue is particularly prevalent in smaller data types. For instance, when a balance reaches the upper limit of  2^256 ,  it resets to zero. Furthermore, division operations on integers in Solidity can introduce rounding errors, which may result in unexpected discrepancies in calculations that require high precision [2]. While these issues may not directly constitute an integer overflow or underflow vulnerability, they can lead to logical flaws in the business logic of smart contracts.
 ## Toy Example
 ```Solidity
