@@ -1,5 +1,5 @@
 
-## Description
+## Reentrancy
 
 The reentrancy vulnerability occurs when functions that are not intended to allow repeated calls are exploited, often through fallback functions. This enables attackers to bypass critical checks and drain the contract of Ether or deplete the transaction's gas. The vulnerability arises when a contract relies on state variables that should be updated before making external calls but are not, and when no gas limit is imposed on transferring control to another contract. A notorious example of this vulnerability being exploited is the "DAO" attack, where attackers used it to steal a significant amount of Ether.
 
