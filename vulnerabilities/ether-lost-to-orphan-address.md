@@ -1,6 +1,6 @@
 # Ether Lost to Arphan Address
 To execute an Ether transfer, it is essential to provide a valid 160-bit recipient address. If the address entered is invalid or corresponds to a non-existent account, the transaction will still proceed, but the transferred funds will become permanently inaccessible. This results in an irreversible loss, as the Ethereum network does not validate the existence or usability of the recipient address before completing the transfer.
-## Toye Example
+## Toy Example
 ```Solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
