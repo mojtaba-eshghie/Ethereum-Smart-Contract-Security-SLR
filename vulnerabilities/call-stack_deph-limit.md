@@ -46,7 +46,7 @@ contract Attacker {
 
 ## Real World Example
 The Call Stack Attack in the GovernMental contract occurred before the implementation of EIP-150 and exploited the stack depth limit (1024 levels) in the Ethereum Virtual Machine (EVM). In this attack, the attacker used a malicious contract to create recursive calls, increasing the stack depth to 1023. This caused the next call at level 1024 to fail due to the limit. As a result, Ether transfers to intended addresses in the contract failed, and the jackpot was not paid to the recipients. Consequently, the contract was locked, its operations stopped, and 1100 Ether (valued at approximately over $1.5 million in 2023) remained inaccessible.
-With the implementation of EIP-150, similar attacks have become economically impractical since the new gas limit for recursive calls has significantly increased the cost of executing such attacks. This incident underscores the importance of thoroughly reviewing smart contract code and adopting best design practices, such as verifying call results and splitting tasks into smaller arrays to ensure reliability and security. The following paragraphs will explain the contract code lines mentioned.
+With the implementation of EIP-150, similar attacks have become economically impractical since the new gas limit for recursive calls has significantly increased the cost of executing such attacks. This incident underscores the importance of thoroughly reviewing smart contract code and adopting best design practices, such as verifying call results and splitting tasks into smaller arrays to ensure reliability and security. The following paragraphs will explain the contract code lines mentioned [2].
 ```Solidity
 if (lastTimeOfNewCredit + TWELVE_HOURS < block.timestamp) {
     msg.sender.send(amount);
@@ -71,4 +71,5 @@ the stack depth reaches 1024, and due to the EVM's stack depth limitation, this 
 [1] Ziyuan Li, Wangshu Guo, Quan Xu, Yingjie Xu, Huimei Wang, and Ming Xian. Research on blockchain smart contracts vulnerability and a code
 audit tool based on matching rules. In Proceedings of the 2020 International Conference on Cyberspace Innovation of Advanced Technologies, pages
 484–489, 2020.
+
 [2] https://hackernoon.com/smart-contract-attacks-part-2-ponzi-games-gone-wrong-d5a8b1a98dd8
