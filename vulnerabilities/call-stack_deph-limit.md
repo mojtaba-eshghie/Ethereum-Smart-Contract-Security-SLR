@@ -63,7 +63,6 @@ lies in the behavior of send and the stack depth limitation (Stack Depth) in Eth
 
 ```Solidity
 credAddr[credAddr.length - 1].send(profitFromCrash);
-
 ```
 the stack depth reaches 1024, and due to the EVM's stack depth limitation, this call fails. This issue highlights a flaw in the contract's design, as it neglects to handle this limitation properly. As a result of the failed send call, the intended Ether is not transferred to the recipient (the last creditor). This failure leads to funds being locked in the contract, as the code does not handle such cases by default. Furthermore, the contract's reset process is triggered, but without paying the recipient, leaving the jackpot amount (profitFromCrash) stuck in the contract. Additionally, the send function does not throw an exception upon failure and only returns false. Since this false value is not checked in the contract, the contract continues to execute as if the transfer succeeded, enabling the attacker to exploit this flaw.
 
