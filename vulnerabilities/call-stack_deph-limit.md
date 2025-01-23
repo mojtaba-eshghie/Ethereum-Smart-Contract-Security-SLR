@@ -59,6 +59,7 @@ if (lastTimeOfNewCredit + TWELVE_HOURS < block.timestamp) {
  und += 1;
     return false;
 }
+```
 lies in the behavior of send and the stack depth limitation (Stack Depth) in Ethereum's EVM. The send function is used to transfer Ether to a specified address. If the destination address is a smart contract, the fallback function of that contract is automatically executed. An attacker can create a malicious contract that makes recursive calls in its fallback function. These recursive calls can increase the stack depth to 1023. When the send function is executed in the line
 
 ```Solidity
