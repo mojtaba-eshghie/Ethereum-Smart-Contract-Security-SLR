@@ -66,7 +66,6 @@ contract Dexible {
     function swap(uint amount, address tokenIn, address router, bytes memory routerData) external {
         if (IERC20(tokenIn).transferFrom(msg.sender, address(this), amount)) {
             IERC20(tokenIn).safeApprove(router, amount);
-            // 🔴 Vulnerable Line: No type or method validation on router
             (bool succ, ) = router.call(routerData);
             assert(succ, "Failed to swap");
         } else {
