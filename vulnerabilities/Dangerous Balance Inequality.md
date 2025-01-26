@@ -14,9 +14,9 @@ contract TokenSale {
         require(msg.value > 0, "Send ETH to buy tokens");  
         require(totalFunds + msg.value <= FUND_GOAL, "Sale goal reached");  
 
-        uint tokens = msg.value / TOKEN_PRICE; // Calculate the number of tokens purchased
-        balances[msg.sender] += tokens; // Update the buyer's token balance
-        totalFunds += msg.value; // Update the total funds received
+        uint tokens = msg.value / TOKEN_PRICE;  
+        balances[msg.sender] += tokens;  
+        totalFunds += msg.value;  
     }
 
     function saleFinished() public view returns (bool) {
