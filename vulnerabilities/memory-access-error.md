@@ -30,4 +30,28 @@ contract Wallet {
 }
 ```
 ## Real World Example
+```Solidity
+// Vulnerable Smart Contract
+pragma solidity ^0.8.0;
+
+contract Auction {
+    address public highestBidder;
+    uint public highestBid;
+
+    mapping(address => uint) public bids;
+
+    function bid() external payable {
+        require(msg.value > highestBid, "Bid too low");
+
+        // Returning funds to the previous highest bidder
+        if (highestBidder != address(0)) {
+            payable(highestBidder).transfer(highestBid); // 🔴 DoS Risk: If this fails, whole function fails
+        }
+
+        highestBidder = msg.sender;
+        highestBid = msg.value;
+    }
+}
+
+```
 ## References
