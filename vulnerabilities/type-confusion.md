@@ -1,5 +1,6 @@
 # Type Confusion
-Vulnerability occurs when a programmer mistakenly converts an object to a different type or incorrectly utilizes it, like a pointer or variable is allocated with one type and later accessed with an incompatible type. This can lead to logical errors or out-of-bounds memory access [1].
+Type confusion happens when the runtime confuses the type of an object with another type leading to its incorrect utilization. For instance, when a variable is allocated with one type and later accessed with an incompatible type. This can also lead to logical errors or out-of-bounds memory access for storage variables. A specific subcategory of this vulenrability is also known as \emph{storage collision}. This specific subcategory happens when two contracts accessing the same storage space have a different understanding of the storage layout. This vulnerability is often is observed when a proxy upgradability design pattern is used. 
+The proxy upgradability design pattern separates a contract’s state from its logic, allowing the system’s functionality to evolve without losing stored data. In this design, a proxy contract holds the persistent state and delegates calls to an external implementation contract using the low-level \texttt{delegatecall} opcode. [1].
 ## Toy Example
 ```Solidity
 pragma solidity ^0.8.0;
