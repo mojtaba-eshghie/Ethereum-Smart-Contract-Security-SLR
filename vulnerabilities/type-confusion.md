@@ -1,6 +1,6 @@
 # Type Confusion
-Type confusion happens when the runtime confuses the type of an object with another type leading to its incorrect utilization. For instance, when a variable is allocated with one type and later accessed with an incompatible type. This can also lead to logical errors or out-of-bounds memory access for storage variables. A specific subcategory of this vulenrability is also known as \emph{storage collision}. This specific subcategory happens when two contracts accessing the same storage space have a different understanding of the storage layout. This vulnerability is often is observed when a proxy upgradability design pattern is used. 
-The proxy upgradability design pattern separates a contract’s state from its logic, allowing the system’s functionality to evolve without losing stored data. In this design, a proxy contract holds the persistent state and delegates calls to an external implementation contract using the low-level \texttt{delegatecall} opcode. [1].
+Type confusion happens when the runtime confuses the type of an object with another type leading to its incorrect utilization. For instance, when a variable is allocated with one type and later accessed with an incompatible type. This can also lead to logical errors or out-of-bounds memory access for storage variables. A specific subcategory of this vulenrability is also known as storage collision. This specific subcategory happens when two contracts accessing the same storage space have a different understanding of the storage layout. This vulnerability is often is observed when a proxy upgradability design pattern is used. 
+The proxy upgradability design pattern separates a contract’s state from its logic, allowing the system’s functionality to evolve without losing stored data. In this design, a proxy contract holds the persistent state and delegates calls to an external implementation contract using the low-level  delegatecall opcode [1].
 ## Toy Example
 ```Solidity
 pragma solidity ^0.8.0;
@@ -42,7 +42,7 @@ contract Dexible {
     function swap(uint amount, address tokenIn, address router, bytes memory routerData) external {
         if (IERC20(tokenIn).transferFrom(msg.sender, address(this), amount)) {
             IERC20(tokenIn).safeApprove(router, amount);
-            // 🔴 Vulnerable Line: No type or method validation on router
+            // Vulnerable Line: No type or method validation on router
             (bool succ, ) = router.call(routerData);
             assert(succ, "Failed to swap");
         } else {
