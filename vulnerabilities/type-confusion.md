@@ -2,60 +2,35 @@
 Vulnerability occurs when a programmer mistakenly converts an object to a different type or incorrectly utilizes it, like a pointer or variable is allocated with one type and later accessed with an incompatible type. This can lead to logical errors or out-of-bounds memory access [1].
 ## Toy Example
 ```Solidity
-// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
-
-// Proxy contract
 contract Proxy {
-    address public implementation; // Address of the logic contract
-    address public owner; // Owner of the proxy contract
-
-    constructor(address _implementation) {
-        implementation = _implementation;
-        owner = msg.sender;
-    }
-
-    function updateImplementation(address _newImplementation) external {
-        require(msg.sender == owner, "Not authorized");
-        implementation = _newImplementation;
-    }
-
-    // Delegatecall forwards calls to the implementation contract
-    fallback() external payable {
-        address impl = implementation;
-        require(impl != address(0), "Implementation not set");
-
-        assembly {
-            let ptr := mload(0x40)
-            calldatacopy(ptr, 0, calldatasize())
-            let result := delegatecall(gas(), impl, ptr, calldatasize(), 0, 0)
-            let size := returndatasize()
-            returndatacopy(ptr, 0, size)
-            switch result
-            case 0 { revert(ptr, size) }
-            default { return(ptr, size) }
-        }
-    }
+ uint public visits; // Storage slot [0x0]
+ address public LOGIC; // Storage slot [ERC-1967]
+ constructor(address logicAddress) {
+  LOGIC = logicAddress;
+  (bool success, ) = LOGIC.delegatecall(abi.encodeWithSignature("initialize()"));
+  require(success, "Initialization failed");
+ }
+ fallback() external payable {
+  (bool success, ) = LOGIC.delegatecall(msg.data);
+  require(success, "Delegatecall failed");
+ }
 }
-
-// Logic Contract V1
-contract LogicV1 {
-    uint256 public counter;
-
-    function increment() external {
-        counter += 1;
-    }
+contract Logic {
+ bool public initialized; // Storage slot [0x0]
+ address public admin; // Storage slot [0x0]
+ uint[] public artworkIDs; // Storage slot [0x1]
+ mapping(address => uint) public artworkHolders; // Storage slot [0x2]
+ function initialize() external {
+  require(!initialized, "Already initialized");
+  initialized = true;
+  admin = msg.sender; // Overwrites Proxy's storage slot [0x0]
+ }
+ function withdraw() external {
+  require(msg.sender == admin, "Not admin");
+  payable(admin).transfer(address(this).balance);
+ }
 }
-
-// Logic Contract V2 (Vulnerable)
-contract LogicV2 {
-    address public counter; // 🔴 Potential Type Confusion: The type of 'counter' has changed from uint256 to address.
-
-    function setCounter(address _addr) external {
-        counter = _addr; // This overwrites storage slot, potentially breaking assumptions of Proxy.
-    }
-}
-
 ```
 
 ## Real World Example
