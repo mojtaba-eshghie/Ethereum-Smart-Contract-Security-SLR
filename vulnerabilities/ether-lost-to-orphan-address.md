@@ -16,7 +16,7 @@ contract EtherLostToInvalidAddress {
         uint256 balance = address(this).balance;
         require(balance > 0, "No funds available to transfer!");
 
-        // 🔴 Vulnerability: If the recipient address is invalid or inaccessible,
+        //  Vulnerability: If the recipient address is invalid or inaccessible,
         // the Ether will be permanently lost and cannot be recovered.
         (bool success, ) = payable(recipient).call{value: balance}("");
         require(success, "Ether transfer failed!");
