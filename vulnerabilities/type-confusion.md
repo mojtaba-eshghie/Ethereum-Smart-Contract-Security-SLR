@@ -35,31 +35,14 @@ contract Logic {
 ```
 
 ## Real World Example
-The Dexible attack on February 17, 2023, resulted in the theft of approximately $2 million USD due to a vulnerability in the delegatecall function, which allowed execution of user-specified data against an arbitrary target address (to) without validation. This function enabled attackers to execute malicious contract logic in Dexible’s storage context. The lack of validation allowed attackers to overwrite critical variables and misuse storage layouts, leading to unauthorized token transfers and loss of control over the contract.
-The paper [1] mentions the Dexible contract as an example of a confused deputy attack (CDA), which it connects to the concept of type confusion. The specific vulnerability lies in the swap function, where an untrusted user could supply a malicious callback or contract address to the router parameter. The system lacked verification of the method or type of this router, resulting in an unsafe delegate call. This mismatch between the assumed type of the router parameter by the caller and the actual type of the provided malicious contract demonstrates a classic type confusion scenariocode highlighting the vulnerable block is as follows:
-```Solidity
-contract Dexible {
-    function swap(uint amount, address tokenIn, address router, bytes memory routerData) external {
-        if (IERC20(tokenIn).transferFrom(msg.sender, address(this), amount)) {
-            IERC20(tokenIn).safeApprove(router, amount);
-            // Vulnerable Line: No type or method validation on router
-            (bool succ, ) = router.call(routerData);
-            assert(succ, "Failed to swap");
-        } else {
-            revert("Insufficient balance");
-        }
-    }
-}
-```
-The vulnerability arises because the router parameter, which is an address, can point to any contract without validation of its type or the methods it supports. The (bool succ, ) = router.call(routerData) line dynamically calls the provided contract at router with arbitrary data, effectively allowing an attacker to exploit Dexible's authority and perform unauthorized actions, such as transferring funds.
-
-This demonstrates type confusion because the expected type of router (a legitimate exchange contract) is mismatched with the type of the malicious contract provided by the attacker. The lack of type enforcement or method signature validation creates an opportunity for exploitation.
+On July 23, 2022, Audius experienced a security breach where an attacker exploited a vulnerability in the contract initialization code, allowing them to repeatedly invoke the initialize functions. This exploit enabled the malicious transfer of 18 million $AUDIO tokens from the community treasury to the attacker's wallet and unauthorized modifications to the voting system's staked $AUDIO amounts. The vulnerability stemmed from a storage collision between the proxyAdmin address and OpenZeppelin's Initializable contract's state variables, causing the initializer modifier to always succeed. Despite prior audits by OpenZeppelin and Kudelski, this issue was not identified.
+The example provided in the toy example section is actually a simulation of the real code, accurately demonstrating what happened in the actual contract.
+This smart contract setup is vulnerable to a storage collision due to the improper alignment of storage slots between the Proxy and Logic contracts when using delegatecall Specifically both contracts store critical state variables in slot 0x0 but with different interpretations the Proxy contract uses it for visits while the Logic contract stores initialized and admin in the same slot When initialize is called via delegatecall it writes true 1 to initialized and sets admin to msg sender unknowingly overwriting the visits variable in the Proxy contract An attacker can exploit this by re invoking initialize since the overwritten storage allows it to be called again setting their own address as admin Once this is done they can execute withdraw to drain the contracts funds.
+The example provided in the toy example section is actually a simulation of the real code, accurately demonstrating what happened in the actual contract.
 
 ## References
 [1] Yao, S., Ni, H., Myers, A. C., & Cecchetti, E. (2024). SCIF: A Language for Compositional Smart Contract Security. arXiv preprint arXiv:2407.01204.
 
-[2] https://github.com/thorium-dev-group/dexible-contracts
-
-[3] https://blockapex.io/dexible-hack-analysis/?utm_source=chatgpt.com
+[2] [https://github.com/thorium-dev-group/dexible-contracts](https://blog.audius.co/article/audius-governance-takeover-post-mortem-7-23-22?utm_source=chatgpt.com)
 
 
