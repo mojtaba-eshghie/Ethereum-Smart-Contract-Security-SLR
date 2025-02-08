@@ -15,7 +15,7 @@ contract LiquidityPool {
 
 ```
 ## Real World Example
-In the Vader Protocol project, a critical Type Mismatch vulnerability was identified in the calcLiquidityUnits function, which was responsible for calculating liquidity based on token inputs. The function incorrectly combined units of different tokens without properly aligning them, leading to incorrect liquidity allocations. This vulnerability was discovered in 2023 and caused a financial loss of $57 million for users. Despite undergoing multiple rounds of manual and automated audits, this issue remained undetected and became an example of a high-risk vulnerability in smart contracts.
+In the Vader Protocol project, a critical Type Mismatch vulnerability was identified in the calcLiquidityUnits function, which was responsible for calculating liquidity based on token inputs. The function incorrectly combined units of different tokens without properly aligning them, leading to incorrect liquidity allocations. This vulnerability was discovered in 2023 and caused a financial loss of $57 million for users. Despite undergoing multiple rounds of manual and automated audits, this issue remained undetected and became an example of a high-risk vulnerability in smart contracts. The following function represents the vulnerable block of code in this protocol:
 ```Solidity
  function calcLiquidityUnits(uint b, uint B, uint t, uint T, uint P) external view returns (uint){
     uint part1 = (t * B);
