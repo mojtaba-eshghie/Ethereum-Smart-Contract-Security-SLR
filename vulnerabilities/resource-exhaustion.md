@@ -4,6 +4,7 @@ The gas mechanism in EVM is used to determine how much it costs to execute smart
 Exploitation of smart contracts is enabled by inconsistencies in resource metering, allowing attackers to create low-throughput contracts that consume excessive computational power at minimal cost. This leads to a Resource Exhaustion Attack, where crafted transactions cause severe delays, preventing network nodes from staying synchronized with the blockchain. 
 
 ## Toy Example
+```Solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
@@ -28,7 +29,7 @@ contract ExtCodeSizeAttack {
         }
     }
 }
-
+```
 ## Real World Example
 In September 2016, an attack occurred on the Ethereum network due to the incorrect pricing of the EXTCODESIZE instruction in the EVM, which had a low gas cost despite the heavy computational requirements. Attackers used this flaw to execute DoS attacks, sending transactions with multiple EXTCODESIZE calls, overloading nodes with excessive disk access, leading to network slowdowns and higher gas costs. Additionally, improper use of EXTCODESIZE can cause security issues, like misidentifying addresses of smart contracts or externally owned accounts (EOA), potentially leading to vulnerabilities.
 
