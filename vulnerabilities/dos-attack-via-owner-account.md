@@ -3,6 +3,43 @@
 Many smart contracts have an owner account that controls the contract. If this account is not adequately protected, attackers may exploit it, which could lead to severe consequences, such as permanently locking Ether within the contract
 ## Toy Example
 
+```Solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract VulnerableCrowdsale {
+    uint256 public raised;
+    uint256 public goal = 5 ether;
+    uint256 public status; // 0 = ongoing, 1 = success, 2 = failed
+    address public owner;
+    mapping(address => uint256) public deposits;
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    function invest() public payable {
+        deposits[msg.sender] += msg.value;
+        raised += msg.value;
+    }
+
+    function setOwner(address newOwner) public {
+        owner = newOwner;  // No access control! Anyone can become the owner.
+    }
+
+    function setStatus(uint256 newStatus) public {
+        require(newStatus == 1 || newStatus == 2, "Invalid status");
+        status = newStatus;  // No access control! Anyone can change status.
+    }
+
+    function withdraw() public {
+        require(status == 1, "Fundraising not successful");
+        payable(owner).transfer(raised);  // If attacker is the owner, they steal all funds.
+    }
+}
+
+```
+
 ## Real World Example
 Crowdsale smart contract, a real example of an account owner attack, suffered from a DoS attack via the owner account, which ultimately allowed an attacker to steal all raised funds. The attack was possible due to missing access control mechanisms in key functions of the contract. The vulnerabilities allowed any user to change the contract's ownership, update its funding status, and withdraw funds. As a result, investors lost their deposits, and the fundraiser failed. Below is a detailed breakdown of how this attack worked.
 
