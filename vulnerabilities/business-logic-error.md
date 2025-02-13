@@ -1,4 +1,4 @@
-# Type Mismatch
+# Business Logic Error
 In smart contracts, business logic errors—also referred to as accounting errors—occur when financial calculations are inconsistent, inaccurate, or disorganized because of type errors, misinterpreted or mismanaged units token unit, which can result in %fund mismanagement and 
 exploitation. 
 
