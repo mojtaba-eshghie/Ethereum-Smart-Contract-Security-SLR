@@ -1,0 +1,12 @@
+#  Compiler Version Not Fixed
+This vulnerability occurs when a contract uses an outdated compiler, exposing it to bugs and security risks~\cite{demir2019security}. If \texttt{pragma solidity \texttt 0.4.0;} is used, the contract can be compiled with any \texttt{0.4.x} version, including vulnerable ones.  
+For example, in versions before \texttt{0.4.22}, a function with the same name as the contract (e.g., \texttt{function Vulnerable() public \{\}}) was treated as a regular function instead of a constructor, making it callable by attackers. However, if \texttt{pragma solidity 0.4.25;} is used instead, the contract is only compilable with version \texttt{0.4.25},  
+where constructors must be explicitly defined using the \texttt{constructor} keyword (e.g., \texttt{constructor() public \{\}}), preventing this vulnerability by restricting compilation to a safe version~\cite{chen2020survey}.
+
+## Toy Example
+
+
+## Real World Example
+
+
+## REferences
