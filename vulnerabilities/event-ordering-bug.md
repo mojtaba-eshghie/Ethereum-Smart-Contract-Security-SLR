@@ -24,15 +24,16 @@ In 2017, a Casino smart contract suffered from an event ordering (EO) bug, leadi
 . The contract used an off-chain oracle (Oraclize API) to generate random numbers to determine winners. The issue arose because bets were accepted and processed asynchronously, meaning oracle callbacks could return in an unexpected order. If multiple players placed bets at the same time, and the oracle responses were processed out of order, some winners would not receive their payouts if the contract's balance was insufficient after processing an earlier payout. This event ordering flaw made the game unfair and exploitable, as players could manipulate the bet timing to increase their chances of receiving payouts first.
 
 ```Solidity
-bytes32 oid = oraclize_query(...); // Request random number
+bytes32 oid = oraclize_query(...);  
 bets[oid] = msg.value;
 players[oid] = msg.sender;
 
 if (parseInt(result) % 200 == 42)
-    players[myid].send(bets[myid] * 100);  //  Problematic payout logic
+    players[myid].send(bets[myid] * 100);   
 
 ```
 This flaw becomes evident when multiple players place bets simultaneously—since bets are stored in a mapping (bets[oid]) and referenced via oid (oracle query ID), the contract assumes that payouts will be processed in the same order as bets were placed, which is not guaranteed. If a later bet’s oracle response is processed first, the contract may incorrectly distribute payouts, potentially depleting funds before earlier bets are resolved, leading to unfair results.
 
 
 ## References
+[1] Kolluri, A., Nikolic, I., Sergey, I., Hobor, A., & Saxena, P. (2019, July). Exploiting the laws of order in smart contracts. In Proceedings of the 28th ACM SIGSOFT international symposium on software testing and analysis (pp. 363-373).
