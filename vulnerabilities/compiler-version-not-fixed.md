@@ -38,6 +38,6 @@ The DynamicPyramid() function was intended to be the constructor, but after the 
 
 ## REferences
 
-[] https://github.com/crytic/not-so-smart-contracts/blob/master/wrong_constructor_name/Rubixi_source_code/Rubixi.sol
+[1] https://github.com/crytic/not-so-smart-contracts/blob/master/wrong_constructor_name/Rubixi_source_code/Rubixi.sol
 
-[] Demir, M., Alalfi, M., Turetken, O., & Ferworn, A. (2019, July). Security smells in smart contracts. In 2019 IEEE 19th International Conference on Software Quality, Reliability and Security Companion (QRS-C) (pp. 442-449). IEEE.
+[2] Demir, M., Alalfi, M., Turetken, O., & Ferworn, A. (2019, July). Security smells in smart contracts. In 2019 IEEE 19th International Conference on Software Quality, Reliability and Security Companion (QRS-C) (pp. 442-449). IEEE.
