@@ -4,20 +4,11 @@ This Vulnerability refers to vulnerabilities in smart contracts that rely on pse
 ## Toye Example 
 ```Solidity
 pragma solidity ^0.8.0;
-
 contract InsecureRandom {
     uint256 public randomResult;
-
-    /**
-     * @dev Generates a "random" number using block.timestamp, block.difficulty, and msg.sender.
-     * ⚠ WARNING: This method is insecure and prone to manipulation.
-     * - `block.timestamp`: Miners can manipulate the timestamp within a reasonable range.
-     * - `block.difficulty`: Predictable, especially in stable difficulty environments.
-     * - `msg.sender`: Controlled by the user calling the function.
-     */
     function getRandomNumber() public {
         randomResult = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, msg.sender)));
-        // 🔴 Vulnerability: Using block.timestamp and block.difficulty makes the randomness predictable and manipulable.
+        // Using block.timestamp and block.difficulty makes the randomness predictable and manipulable.
     }
 }
 ```
