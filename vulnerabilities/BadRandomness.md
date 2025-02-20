@@ -21,15 +21,10 @@ In the following code block, the vulnerability lies specifically in the line whe
 function play() payable public returns (uint) {
     return playSystem(uint(keccak256(msg.sender, block.number)), address(0));
 }
-
 ```
-The vulnerability allows attackers to manipulate the outcome of the lottery. Here's how the exploit works in practice:
-- Input Control: The attacker has complete control over the msg.sender parameter since it represents the address of the transaction sender. By using multiple addresses or smart contracts, they can influence the randomness calculation. Block Number Manipulation: Miners can manipulate the block.number parameter by controlling when a transaction is included in the block. This allows them to predict or influence the random number generated.
-- Attackers can precompute the result of the keccak256 function using different combinations of msg.sender and block.number to identify favorable outcomes. Once an attacker determines favorable inputs, they execute the function at the desired block number with the manipulated sender address, guaranteeing a win in the lottery. This exploit undermines the fairness of the lottery system by allowing attackers to game the randomness mechanism. The predictable nature of msg.sender and block.number makes this approach ineffective for any application requiring secure randomness.
-### How the Exploit Works:
-- Attack Setup: The attacker repeatedly sends transactions with different addresses or delays their inclusion until the desired block is mined.
-- Outcome Control: By controlling msg.sender and block.number, the attacker can precompute the result of keccak256 and choose parameters that produce a favorable outcome.
-- Exploitation: Once the attacker finds favorable inputs, they execute the function, effectively rigging the lottery.
+ This vulnerability allows attackers to manipulate the lottery’s outcome by exploiting predictable inputs in the randomness mechanism. Since msg.sender represents the transaction sender’s address, an attacker can use multiple addresses or smart contracts to influence the random number generation. Additionally, miners can control the block.number parameter by choosing when to include a transaction in a block, further manipulating the outcome. By precomputing the keccak256 hash with different combinations of msg.sender and block.number, attackers can determine favorable inputs in advance. Once an optimal combination is found, they execute the transaction at the desired block, ensuring a guaranteed win.
+
+This exploit undermines the fairness of the lottery by making the randomness predictable. Attackers can repeatedly submit transactions with different addresses or delay their inclusion in a block until they achieve a favorable result. Since both msg.sender and block.number are insufficient for secure randomness, any application relying on them for unpredictable outcomes remains vulnerable to manipulation.
 
 ## References
 [1] Bo Jiang, Ye Liu, and Wing Kwong Chan. Contractfuzzer: Fuzzing smart contracts for vulnerability detection. In Proceedings of the 33rd ACM/IEEE International Conference on Automated Software Engineering, pages 259–269, 2018.
