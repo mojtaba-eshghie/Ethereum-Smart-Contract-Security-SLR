@@ -4,8 +4,8 @@ This vulnerability was first identified during the attack on BEC tokens [1]. It 
 
 
 ```Solidity
-// This contract demonstrates integer overflow and underflow vulnerabilities.
-// Older Solidity versions (<0.8.0) did not have built-in checks for these issues.
+// This contract demonstrates how older Solidity versions (<0.8.0) lacked automatic protection against overflow and underflow.
+
 
 contract IntegerOverflowExample {
     mapping(address => uint256) public balances;
