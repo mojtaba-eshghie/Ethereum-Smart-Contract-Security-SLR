@@ -2,26 +2,22 @@
 This vulnerability was first identified during the attack on BEC tokens [1]. It occurs when the result of a calculation exceeds the maximum or minimum limit of the variable's data type, making it impossible to accurately represent the value. This issue is particularly prevalent in smaller data types. For instance, when a balance reaches the upper limit of  2^256 ,  it resets to zero. Furthermore, division operations on integers in Solidity can introduce rounding errors, which may result in unexpected discrepancies in calculations that require high precision [2]. While these issues may not directly constitute an integer overflow or underflow vulnerability, they can lead to logical flaws in the business logic of smart contracts.
 ## Toy Example
 ```Solidity
-pragma solidity ^0.7.0;
-
-contract OverflowExample {
-    uint8 public maxValue = 255; // Maximum value for uint8 (2^8 - 1)
-
-    function add(uint8 _value) public returns (uint8) {
-        uint8 result = maxValue + _value; // ⚠️ This line may cause an Overflow
-        return result;
+Overflow,Underflow in Solidity} ,label={lst:overflow}]
+contract IntegerOverflowExample {
+    mapping(address => uint256) public balances;
+    uint256 public constant MAX_UINT = type(uint256).max;
+    function deposit(uint256 amount) public {
+        require(amount > 0, "Amount must be greater than zero");
+        balances[msg.sender] += amount; // Possible overflow if not checked
     }
-}
-```
-```Solidity
-pragma solidity ^0.7.0;
-
-contract UnderflowExample {
-    uint8 public minValue = 0; // Minimum value for uint8
-
-    function subtract(uint8 _value) public returns (uint8) {
-        uint8 result = minValue - _value; // ⚠️ This line may cause an Underflow
-        return result;~
+    function withdraw(uint256 amount) public {
+        require(amount > 0, "Amount must be greater than zero");
+        require(balances[msg.sender] >= amount, "Insufficient balance");
+        balances[msg.sender] -= amount; // Underflow risk if unchecked
+    }
+    function forceOverflow() public {
+        balances[msg.sender] = MAX_UINT; // Assign max value
+        balances[msg.sender] += 1; // This would have caused overflow in older Solidity versions (<0.8.0)
     }
 }
 ```
