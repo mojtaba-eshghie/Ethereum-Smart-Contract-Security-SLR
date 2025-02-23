@@ -6,8 +6,6 @@ This vulnerability was first identified during the attack on BEC tokens [1]. It 
 ```Solidity
 // This contract demonstrates integer overflow and underflow vulnerabilities.
 // Older Solidity versions (<0.8.0) did not have built-in checks for these issues.
-
-Overflow,Underflow in Solidity} ,label={lst:overflow}]
 contract IntegerOverflowExample {
     mapping(address => uint256) public balances;
     uint256 public constant MAX_UINT = type(uint256).max;
