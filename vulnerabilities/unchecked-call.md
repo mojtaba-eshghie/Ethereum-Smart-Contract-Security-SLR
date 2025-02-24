@@ -3,14 +3,27 @@ This vulnerability, referred to as "Unchecked External Call," "Mishandled Except
 
 ## Toy Example
 ```Solidity
-contract UncheckedReturn {
-        // Function to send Ether to a target address
-        function sendEther(address payable _target) public payable {
-            // Attempt to send Ether without checking the return value
-            _target.transfer(msg.value); // No check for success
-            // If the transfer fails, it could lead to unexpected behavior
-        }
+contract VulnerableWallet {
+    mapping(address => uint) public balances;
+    
+    // Deposit Ether into the user's account
+    function deposit() public payable {
+        balances[msg.sender] += msg.value;
     }
+    
+    // Withdraw Ether with an unchecked return value vulnerability
+    function withdraw() public {
+        uint amount = balances[msg.sender];
+        require(amount > 0, "Zero balance");
+        
+        balances[msg.sender] = 0; // Reset account balance to zero before sending
+        payable(msg.sender).send(amount); //Unchecked send success
+        
+        // If the send fails:
+        // 1. The user has lost their balance
+        // 2. Ether never reaches the user
+    }
+}
 ```
 # Real World Example
 In 2016, a smart contract named King of the Ether Throne (KotET), which ultimately resulted in the permanent loss of all Ether within it (estimated to be a significant amount at the time), gained attention as a decentralized game where players could claim the throne by sending Ether to the contract. The game’s mechanics revolved around a simple but enticing concept: each new King paid a claim price to take the throne, and the dethroned King would receive compensation. As the number of Kings increased, so did the cost of claiming the throne. If no new King emerged within 14 days, the throne would reset, and the game would start anew. This game, inspired by the “Greater Fool’s Theory,” attracted participants eager to profit, but it harbored a critical vulnerability that led to its demise.
@@ -28,6 +41,7 @@ Additionally, the sweepCommission() function, meant for the owner to withdraw fe
 
 # References
 [1] Hengyan Zhang, Weizhe Zhang, Yuming Feng, and Yang Liu. Svscanner: Detecting smart contract vulnerabilities via deep semantic extraction. Journal of Information Security and Applications, 75:103484, 2023
+
 [2] https://medium.com/hackernoon/smart-contract-attacks-part-2-ponzi-games-gone-wrong-d5a8b1a98dd8
 
 
