@@ -3,6 +3,7 @@ The `selfdestruct` opcode, known as suicide, enables a  CoB to terminate itself,
 As a result of attacks abusing this feature, the contract becomes irresponsive because the code section is permanently deleted resulting in a DoS scenario. Besides, the transfer of the contract's Ether might also be abused to drain the assets. All the funds associated with the SC are transferred to the designated beneficiary account without triggering fallback functions. The beneficiary can either be an existing account or a non-existing one.
 
 ## Toy Example
+```Solidity
 contract Self-destructExample {
     // Address of the contract owner
     address payable public contractOwner;
@@ -22,7 +23,7 @@ contract Self-destructExample {
         // Accepts Ether deposits to the contract balance
     }
 }
-
+```
 ## A Real-World Incident Involving Self Destruction
 In November 2017, the Parity multi-signature wallet experienced a catastrophic vulnerability stemming from an improperly secured use of the `selfdestruct` opcode in its shared library contract. Multi-signature wallets created by Parity relied on a library contract for core functionality. However, the developers failed to adequately secure the initialization and ownership of this library contract.
 
