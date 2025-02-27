@@ -1,6 +1,6 @@
 # Suicidal Contract Vulnerabilitiy
-The `selfdestruct` opcode, known as suicide, enables a  CoB to terminate itself, releasing the Ether held in its accounts. This feature is typically utilized in emergencies. A SC is suicidal if it fails to secure the usage of `selfdestruct` opcode properly. 
-As a result of attacks abusing this feature, the contract becomes irresponsive because the code section is permanently deleted resulting in a DoS scenario. Besides, the transfer of the contract's Ether might also be abused to drain the assets. All the funds associated with the SC are transferred to the designated beneficiary account without triggering fallback functions. The beneficiary can either be an existing account or a non-existing one.
+The `selfdestruct` opcode, known as suicide, enables a  bytecode to terminate itself, releasing the Ether held in its accounts. This feature is typically utilized in emergencies. A smart contract is suicidal if it fails to secure the usage of `selfdestruct` opcode properly. 
+As a result of attacks abusing this feature, the contract becomes irresponsive because the code section is permanently deleted resulting in a DoS scenario. Besides, the transfer of the contract's Ether might also be abused to drain the assets. All the funds associated with the smart contract  are transferred to the designated beneficiary account without triggering fallback functions. The beneficiary can either be an existing account or a non-existing one.
 
 ## Toy Example
 ```Solidity
