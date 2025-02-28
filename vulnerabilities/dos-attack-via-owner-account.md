@@ -68,4 +68,5 @@ function withdraw() public {
 ```
 Since the attacker had already taken ownership, they could now call withdraw() and transfer all raised funds to their own address. This effectively emptied the contract and left legitimate investors with nothing.
 
-## References
+## Referen
+[1]https://github.com/LeadcoinNetwork/crowdsale-smart-contract
