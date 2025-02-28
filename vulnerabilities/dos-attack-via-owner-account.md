@@ -1,12 +1,12 @@
 # DoS Attack via Owner Account
 
-Many smart contracts have an owner account that controls the contract. If this account is not adequately protected, attackers may exploit it, which could lead to severe consequences, such as permanently locking Ether within the contract
+Many smart contracts designate an owner account with privileged control over critical functions such as fund withdrawals, parameter modifications, and contract upgrades. If this account is not properly secured, attackers could exploit vulnerabilities like private key exposure, phishing attacks, or weak authentication mechanisms to gain unauthorized access. This could result in severe consequences, such as permanently locking Ether within the contract, unauthorized fund transfers, disabling essential functions, or even triggering self-destruct mechanisms if implemented. To prevent such risks, developers must implement multi-signature authentication, timelocks for critical operations, and role-based access controls to limit the potential damage from compromised ownership.
+
 ## Toy Example
+The VulnerableCrowdsale contract lacks access control, allowing anyone to become the owner (setOwner), change the status (setStatus), and withdraw all funds (withdraw) if they take control. This makes it vulnerable to ownership hijacking, fundraising manipulation, and fund theft.
+
 
 ```Solidity
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
-
 contract VulnerableCrowdsale {
     uint256 public raised;
     uint256 public goal = 5 ether;
