@@ -10,7 +10,7 @@ contract Attacker {
     }
 
     function attack() public {
-        victimContract.withdrawAll(); // 🔴 Exploits the `tx.origin` vulnerability in the Victim contract to withdraw Ether.
+        victimContract.withdrawAll(); // Exploits the `tx.origin` vulnerability in the Victim contract to withdraw Ether.
     }
 
     receive() external payable {} // Contract can receive Ether
@@ -26,18 +26,8 @@ function transferFunds(address recipient, uint256 amount) public {
 }
 
 ```
-### How the Exploit Works
-The vulnerability arises because tx.origin traces the original sender of a transaction, even if the transaction passes through multiple intermediary contracts. This behavior enables attackers to craft malicious contracts that exploit users interacting with them. Here's how the attack unfolds:
-- Crafting the Malicious Contract:
-The attacker creates a malicious contract that interacts with the vulnerable function in the THORChain Router contract.
-- Deceiving the User:
-The attacker tricks the legitimate user into calling a function on the malicious contract, believing it to be safe.
-- Passing tx.origin:
-When the malicious contract executes the _transfer function in the THORChain Router, tx.origin still reflects the original sender (the legitimate user) instead of the intermediary malicious contract.
-- Unauthorized Fund Transfer:
-The _transfer function erroneously authorizes the transfer based on tx.origin, allowing the attacker to redirect funds from the legitimate user to their account without the user's direct consent.
-- Funds Redirected:
-The attacker ensures the funds are sent to their controlled address (recipient), effectively stealing from the legitimate user.
+
+The vulnerability arises because tx.origin traces the original sender of a transaction, even if it passes through multiple intermediary contracts, allowing attackers to exploit this behavior. In the attack, the attacker crafts a malicious contract that interacts with the vulnerable function in the THORChain Router contract. They deceive the legitimate user into interacting with the malicious contract, believing it to be safe. As the malicious contract executes the _transfer function in the THORChain Router, tx.origin still reflects the original sender (the legitimate user) instead of the intermediary malicious contract. This results in an unauthorized fund transfer, as the _transfer function erroneously authorizes the transfer based on tx.origin, allowing the attacker to redirect funds to their own address, effectively stealing from the legitimate user without their direct consent.
 
 
 ## References
