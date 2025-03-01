@@ -1,19 +1,20 @@
 # Tx.origin
 The vulnerability related to tx.origin arises because it identifies the address of the user who originated the transaction, rather than the immediate caller of a function. This is problematic in identity verification because tx.origin includes the initial sender, even if multiple contracts are involved in the transaction. This can lead to attacks where a malicious contract tricks the vulnerable contract into assuming the attacker is the legitimate user, enabling unauthorized actions like withdrawing Ether or transferring assets [1].
 ## Toye Example
+The Victim contract contains a vulnerability due to its use of tx.origin for authorization in the withdrawAll function. The contract checks if the transaction's origin matches the owner before allowing the withdrawal of all funds. However, using tx.origin can be exploited by an attacker through a malicious contract, allowing unauthorized access to funds.
+
 ```Solidity
-contract Attacker {
-    Victim public victimContract;
-
-    constructor(address _victimContractAddress) {
-        victimContract = Victim(_victimContractAddress);
+contract Victim {
+    address public owner;
+    constructor() {
+        owner = msg.sender;
     }
-
-    function attack() public {
-        victimContract.withdrawAll(); // Exploits the `tx.origin` vulnerability in the Victim contract to withdraw Ether.
+    function withdrawAll() public {
+        require(tx.origin == owner, "Not authorized");
+        payable(msg.sender).transfer(address(this).balance);
     }
-
-    receive() external payable {} // Contract can receive Ether
+    receive() external payable {}   
+}
 }
 ```
 ## Real World Example
