@@ -1,0 +1,24 @@
+id,label
+0,C:Access Control
+1,C:Reentrancy
+2,C:Price Manipulation
+3,C:Rounding Errors
+4,C:Input Validation
+5,C:Business Logic
+6,C:Dangerous Delegatecall
+7,C:Storage Collisions
+8,C:Integer Underflow
+9,C:Governance
+10,V:Flash Loan
+11,V:Reentrancy
+12,V:Oracle
+13,V:ArbitraryCall
+14,V:Delegatecall
+15,V:Governance
+16,V:PrivKey
+17,V:AdminPrivilege
+18,V:StorageCollision
+19,V:Precision
+20,L:Small (< $1 M)
+21,L:Medium ($1‑10 M)
+22,L:Large (> $10 M)
